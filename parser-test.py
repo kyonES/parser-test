@@ -23,16 +23,32 @@ class Parser:
 
     def parse_natural(self):
         res = ""
-        if not is_digit(self.s[self.pos]):
+        first = self.peek()
+        if not is_digit(first):
             raise ParseError()
-        res += self.s[self.pos]
+        res += first
         self.pos += 1
-        if res == "0" and is_digit(self.s[self.pos]):
-            raise ParseError()
-        while self.pos < len(self.s) and is_digit(self.s[self.pos]):
-            res += self.s[self.pos]
+        while True:
+            try:
+                c = self.peek()
+            except ParseError:
+                break
+            if not is_digit(c):
+                break
+            if first == "0":
+                raise ParseError()
+            res += c
             self.pos += 1
         return int(res)
+
+    def peek(self):
+        """
+        現在位置の文字を返す
+        """
+        if self.pos < len(self.s):
+            return self.s[self.pos]
+        else:
+            raise ParseError()
 
 
 print(Parser(input()).parse())
