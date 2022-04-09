@@ -1,5 +1,16 @@
+# JSON paser
 class ParseError(Exception):
     pass
+
+
+"""
+文字が数字かどうか判定
+"""
+
+
+def is_digit(c):
+    # 文字列の大小比較
+    return "0" <= c and c <= "9"
 
 
 class Parser:
@@ -12,14 +23,13 @@ class Parser:
 
     def parse_natural(self):
         res = ""
-        # 文字列の大小比較
-        if not ("0" <= self.s[self.pos] and self.s[self.pos] <= "9"):
+        if not is_digit(self.s[self.pos]):
             raise ParseError()
         res += self.s[self.pos]
         self.pos += 1
-        if res == "0" and "0" <= self.s[self.pos] and self.s[self.pos] <= "9":
+        if res == "0" and is_digit(self.s[self.pos]):
             raise ParseError()
-        while self.pos < len(self.s) and "0" <= self.s[self.pos] and self.s[self.pos] <= "9":
+        while self.pos < len(self.s) and is_digit(self.s[self.pos]):
             res += self.s[self.pos]
             self.pos += 1
         return int(res)
