@@ -19,7 +19,19 @@ class Parser:
         self.pos = 0
 
     def parse(self):
+        self.spaces()
         return self.parse_natural()
+
+    def spaces(self):
+        while True:
+            try:
+                c = self.peek()
+            except ParseError:
+                break
+            if c == " " or c == "\n" or c == "\t" or c == "\r":
+                self.pos += 1
+            else:
+                break
 
     def parse_natural(self):
         res = ""
