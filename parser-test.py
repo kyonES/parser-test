@@ -20,6 +20,14 @@ class Parser:
 
     def parse(self):
         self.spaces()
+        x = self.json()
+        self.spaces()
+        return x
+
+    def json(self):
+        c = self.peek()
+        if c == "[":
+            return self.array()
         return self.parse_natural()
 
     def spaces(self):
@@ -32,6 +40,32 @@ class Parser:
                 self.pos += 1
             else:
                 break
+
+    def array(self):
+        res = []
+        c = self.peek()
+        if c != "[":
+            raise ParseError()
+        self.pos += 1
+        self.spaces()
+        c = self.peek()
+        if c == "]":
+            self.pos += 1
+            return res
+        x = self.json()
+        res.append(x)
+        while True:
+            self.spaces()
+            c = self.peek()
+            if c == "]":
+                self.pos += 1
+                return res
+            if c != ",":
+                raise ParseError()
+            self.pos += 1
+            self.spaces()
+            x = self.json()
+            res.append(x)
 
     def parse_natural(self):
         res = ""
