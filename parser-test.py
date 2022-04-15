@@ -28,7 +28,28 @@ class Parser:
         c = self.peek()
         if c == "[":
             return self.array()
+        if c == "n":
+            return self.null()
         return self.parse_natural()
+
+    def null(self):
+        c = self.peek()
+        if not c == "n":
+            raise ParseError()
+        self.pos += 1
+        c = self.peek()
+        if not c == "u":
+            raise ParseError()
+        self.pos += 1
+        c = self.peek()
+        if not c == "l":
+            raise ParseError()
+        self.pos += 1
+        c = self.peek()
+        if not c == "l":
+            raise ParseError()
+        self.pos += 1
+        return None
 
     def spaces(self):
         while True:
