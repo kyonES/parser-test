@@ -1,4 +1,7 @@
 # JSON paser
+from ast import parse
+
+
 class ParseError(Exception):
     pass
 
@@ -28,6 +31,8 @@ class Parser:
         c = self.peek()
         if c == "[":
             return self.array()
+        if c == "t" or c == "f":
+            return self.boolean()
         if c == "n":
             return self.null()
         return self.parse_natural()
@@ -49,7 +54,46 @@ class Parser:
         if not c == "l":
             raise ParseError()
         self.pos += 1
-        return None
+
+    def boolean(self):
+        c = self.peek()
+        if c == "t":
+            self.pos += 1
+            c = self.peek()
+            if not c == "r":
+                raise ParseError()
+            self.pos += 1
+            c = self.peek()
+            if not c == "u":
+                raise ParseError()
+            self.pos += 1
+            c = self.peek()
+            if not c == "e":
+                raise ParseError()
+            self.pos += 1
+            return True
+
+        elif c == "f":
+            self.pos += 1
+            c = self.peek()
+            if not c == "a":
+                raise ParseError()
+            self.pos += 1
+            c = self.peek()
+            if not c == "l":
+                raise ParseError()
+            self.pos += 1
+            c = self.peek()
+            if not c == "s":
+                raise ParseError()
+            self.pos += 1
+            c = self.peek()
+            if not c == "e":
+                raise ParseError()
+            self.pos += 1
+            return False
+        else:
+            raise ParseError()
 
     def spaces(self):
         while True:
