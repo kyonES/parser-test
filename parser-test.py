@@ -35,7 +35,51 @@ class Parser:
             return self.boolean()
         if c == "n":
             return self.null()
+        if c == "\"":
+            return self.string()
+
         return self.parse_natural()
+
+    def char(self):
+        c = self.peek()
+        if c == "\"":
+            raise ParseError()
+        if c == "\\":
+            self.pos += 1
+            c = self.peek()
+            if c == "n":
+                self.pos += 1
+                return "\n"
+            if c == "r":
+                self.pos += 1
+                return "\r"
+            if c == "t":
+                self.pos += 1
+                return "\t"
+            if c == "\\":
+                self.pos += 1
+                return "\\"
+            if c == "\"":
+                self.pos += 1
+                return "\""
+            raise ParseError()
+        else:
+            self.pos += 1
+            return c
+
+    def string(self):
+        res = ""
+        c = self.peek()
+        if not c == "\"":
+            raise ParseError()
+        self.pos += 1
+        while True:
+            c = self.peek()
+            if c == "\"":
+                self.pos += 1
+                return res
+            x = self.char()
+            res += x
 
     def null(self):
         c = self.peek()
