@@ -37,7 +37,8 @@ class Parser:
             return self.null()
         if c == "\"":
             return self.string()
-
+        if c == "{":
+            return self.object()
         return self.parse_natural()
 
     def char(self):
@@ -175,6 +176,43 @@ class Parser:
             self.spaces()
             x = self.json()
             res.append(x)
+
+    def object(self):
+        res = {}
+        c = self.peek()
+        if not c == "{":
+            raise ParseError()
+        self.pos += 1
+        self.spaces()
+        c = self.peek()
+        if c == "}":
+            self.pos += 1
+            return res
+        x = self.object_item()
+        res[x[0]] = x[1]
+        while True:
+            self.spaces()
+            c = self.peek()
+            if c == "}":
+                self.pos += 1
+                return res
+            if c != ",":
+                raise ParseError()
+            self.pos += 1
+            self.spaces()
+            x = self.object_item()
+            res[x[0]] = x[1]
+
+    def object_item(self):
+        key = self.string()
+        self.spaces()
+        c = self.peek()
+        if c != ":":
+            raise ParseError()
+        self.pos += 1
+        self.spaces()
+        value = self.json()
+        return (key, value)
 
     def parse_natural(self):
         res = ""
