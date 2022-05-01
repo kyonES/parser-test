@@ -1,5 +1,6 @@
 # JSON paser
-from ast import parse
+import sys
+import readline
 
 
 class ParseError(Exception):
